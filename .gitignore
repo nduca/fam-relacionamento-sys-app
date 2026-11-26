@@ -1,0 +1,22 @@
+# Maven / Mule
+target/
+.mule/
+
+# Studio / Eclipse
+.project
+.classpath
+.settings/
+
+# IDEs
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Local-only files
+*.local

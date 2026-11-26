@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow
+		name="post:\candidatos\processos-seletivos\cursos:application\json:api-kit_config"
+		doc:id="2371d2e0-2ca3-4a0d-b342-bdc294758d75">
+		<!-- [STUDIO:"Autenticar Parceiro FAM"]<flow-ref doc:name="Autenticar Parceiro FAM" doc:id="17079c18-f5b6-482c-be9c-a7c91c5492fa" name="autenticar-parceiro-fam-subflow" 
+			/> [STUDIO] -->
+		<!-- [STUDIO:"Consultar Cursos FAM"]<http:request doc:name="Consultar Cursos FAM" doc:id="724fbc2a-b5ec-4287-b4d0-4e3d6623c5bf" config-ref="workflow-fam_http-request" 
+			method="POST" path="${fam.api.cursosPath}"> <http:response-validator> <http:success-status-code-validator values="100..599" /> </http:response-validator> 
+			</http:request> [STUDIO] -->
+		<ee:transform
+			doc:name="Preparar Resposta de Cursos"
+			doc:id="db1c0ef6-5b42-4d44-8c50-0555e4af1879">
+			<ee:message>
+				<ee:set-payload resource="dwl/preparar-resposta-cursos.dwl" />
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow
+		name="post:\candidatos\processos-seletivos\turnos:application\json:api-kit_config"
+		doc:id="5a785ef8-9254-4d02-84e0-ba7cef772684">
+		<!-- [STUDIO:"Autenticar Parceiro FAM"]<flow-ref doc:name="Autenticar Parceiro FAM" doc:id="29e2cbc4-3002-4679-8876-4a658a1dd7c1" name="autenticar-parceiro-fam-subflow" 
+			/> [STUDIO] -->
+		<!-- [STUDIO:"Consultar Turnos FAM"]<http:request doc:name="Consultar Turnos FAM" doc:id="fa53421d-f781-41fe-8f03-ce2fbdb73a4b" config-ref="workflow-fam_http-request" 
+			method="POST" path="${fam.api.turnosPath}"> <http:response-validator> <http:success-status-code-validator values="100..599" /> </http:response-validator> 
+			</http:request> [STUDIO] -->
+		<ee:transform
+			doc:name="Preparar Resposta de Turnos"
+			doc:id="06fae6ff-0768-4e0d-bc21-670ecc88061f">
+			<ee:message>
+				<ee:set-payload resource="dwl/preparar-resposta-turnos.dwl" />
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow
+		name="post:\candidatos\processos-seletivos\polos:application\json:api-kit_config"
+		doc:id="3ec23feb-631e-45b9-9213-04f955a58deb">
+		<!-- [STUDIO:"Autenticar Parceiro FAM"]<flow-ref doc:name="Autenticar Parceiro FAM" doc:id="ddb8b3a5-a03d-4e5d-a966-10665d61d1b9" name="autenticar-parceiro-fam-subflow" 
+			/> [STUDIO] -->
+		<!-- [STUDIO:"Consultar Polos FAM"]<http:request doc:name="Consultar Polos FAM" doc:id="68d0a75b-08c3-48a6-b692-75c0730797eb" config-ref="workflow-fam_http-request" 
+			method="POST" path="${fam.api.polosPath}"> <http:response-validator> <http:success-status-code-validator values="100..599" /> </http:response-validator> 
+			</http:request> [STUDIO] -->
+		<ee:transform
+			doc:name="Preparar Resposta de Polos"
+			doc:id="00fd2131-6171-46e9-bdc0-1f5850bcbb63">
+			<ee:message>
+				<ee:set-payload resource="dwl/preparar-resposta-polos.dwl" />
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow
+		name="post:\candidatos\processos-seletivos\formas-ingresso:application\json:api-kit_config"
+		doc:id="ba2fb837-4e72-41f4-825e-4c7ac5fb4b1c">
+		<!-- [STUDIO:"Autenticar Parceiro FAM"]<flow-ref doc:name="Autenticar Parceiro FAM" doc:id="aab9f6a7-cdf1-4d2e-8b8f-f7e3180824af" name="autenticar-parceiro-fam-subflow" 
+			/> [STUDIO] -->
+		<!-- [STUDIO:"Consultar Formas Ingresso FAM"]<http:request doc:name="Consultar Formas Ingresso FAM" doc:id="7907b609-4949-483e-a6b7-7f99256b87fe" 
+			config-ref="workflow-fam_http-request" method="POST" path="${fam.api.formasIngressoPath}"> <http:response-validator> <http:success-status-code-validator 
+			values="100..599" /> </http:response-validator> </http:request> [STUDIO] -->
+		<ee:transform
+			doc:name="Preparar Resposta de Formas de Ingresso"
+			doc:id="74ab70e8-c818-4ad0-a830-cc89663acce3">
+			<ee:message>
+				<ee:set-payload resource="dwl/preparar-resposta-formas-ingresso.dwl" />
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

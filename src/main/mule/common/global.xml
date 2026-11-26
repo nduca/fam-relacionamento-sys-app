@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule
+	xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+
+	<apikit:config
+		name="api-kit_config"
+		api="${api.spec}"
+		outboundHeadersMapName="outboundHeaders"
+		httpStatusVarName="httpStatus" />
+
+	<http:listener-config name="api-http-listener_config">
+		<http:listener-connection
+			host="${http.listener.host}"
+			port="${http.listener.port}"
+			readTimeout="${http.listener.readTimeout}" />
+	</http:listener-config>
+
+	<!-- Defaults locais. System/environment properties podem sobrescrever estes valores. -->
+	<global-property
+		name="mule.env"
+		value="local" />
+
+	<global-property
+		name="secure.key"
+		value="LOCAL_TEMPLATE_KEY_CHANGE_ME" />
+
+	<!--<api-gateway:autodiscovery apiId="${api.id}" flowRef="fam-relacionamento-sys-app-flow" ignoreBasePath="true" /> -->
+
+	<!-- Carregar primeiro o arquivo do ambiente: Mule usa a primeira definição encontrada quando a mesma propriedade existe em mais de um arquivo. -->
+	<configuration-properties file="properties/config-${mule.env}.yaml" />
+
+	<configuration-properties file="properties/config.yaml" />
+
+	<secure-properties:config
+		name="secure-properties_config"
+		key="${secure.key}"
+		file="properties/config-secure-${mule.env}.yaml">
+	</secure-properties:config>
+
+	<ee:object-store-caching-strategy
+		name="autenticacao-parceiro_caching-strategy"
+		doc:name="autenticacao-parceiro_caching-strategy"
+		doc:id="15671d20-906c-4e88-8768-c848f0c9f76f"
+		keyGenerationExpression="${fam.token.cache.keyExpression}"
+		objectStore="autenticacao-parceiro_object-store" />
+
+	<os:object-store
+		name="autenticacao-parceiro_object-store"
+		doc:name="autenticacao-parceiro_object-store"
+		doc:id="d0692fd7-7a5a-4065-996c-6b6f4e5c35f0"
+		entryTtlUnit="MINUTES"
+		entryTtl="${fam.token.os.ttl}"
+		expirationInterval="${fam.token.os.interval}" />
+
+	<http:request-config
+		name="autenticacao-fam_http-request"
+		doc:name="autenticacao-fam_http-request"
+		doc:id="cedf913f-2209-46ca-a4f5-2393745faad5"
+		sendCorrelationId="ALWAYS"
+		basePath="${fam.token.basePath}"
+		responseTimeout="${http.request.responseTimeout}">
+		<http:request-connection
+			protocol="HTTPS"
+			host="${fam.host}"
+			port="${fam.port}"
+			connectionIdleTimeout="${http.request.connectionIdleTimeout}" />
+	</http:request-config>
+
+	<http:request-config
+		name="workflow-fam_http-request"
+		doc:name="workflow-fam_http-request"
+		doc:id="68104077-93e5-4349-b655-4bf8aafdf499"
+		sendCorrelationId="ALWAYS"
+		basePath="${fam.api.workflowBasePath}"
+		responseTimeout="${http.request.responseTimeout}">
+		<http:request-connection
+			protocol="HTTPS"
+			host="${fam.host}"
+			port="${fam.port}"
+			connectionIdleTimeout="${http.request.connectionIdleTimeout}" />
+	</http:request-config>
+</mule>

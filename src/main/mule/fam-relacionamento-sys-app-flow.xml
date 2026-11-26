@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd">
+
+	<flow name="fam-relacionamento-sys-app-flow">
+
+		<http:listener
+			config-ref="api-http-listener_config"
+			path="${http.listener.path}">
+			<http:response statusCode="#[vars.httpStatus default 200]">
+				<http:headers><![CDATA[#[((vars.outboundHeaders default {}) ++ {'x-correlation-id': correlationId})]]]></http:headers>
+			</http:response>
+			<http:error-response statusCode="#[vars.httpStatus default 500]">
+				<http:body><![CDATA[#[payload]]]></http:body>
+				<http:headers><![CDATA[#[((vars.outboundHeaders default {}) ++ {'x-correlation-id': correlationId})]]]></http:headers>
+			</http:error-response>
+		</http:listener>
+
+		<set-variable
+			value='#[now() as Number {unit: "milliseconds"}]'
+			doc:name="Definir o Inicio da Requisicao"
+			doc:id="46140dbe-a343-4b2b-998e-9ce0ce6ed088"
+			variableName="inicioRequisicaoMs" />
+		<flow-ref
+			name="registrar-log-requisicao-subflow"
+			doc:name="Registrar Log da Requisicao" />
+
+		<apikit:router config-ref="api-kit_config" />
+
+		<flow-ref
+			name="registrar-log-resposta-subflow"
+			doc:name="Registrar Log da Resposta" />
+
+		<error-handler ref="fam-relacionamento-sys-app-error-handler" />
+
+	</flow>
+	<flow
+		name="fam-relacionamento-sys-app-console-flow"
+		doc:id="5094ce73-ad1a-43e7-ad91-2e834163eca0">
+		<http:listener
+			doc:name="Listener"
+			doc:id="d7e7df1a-b4ce-4593-9954-3a10004af092"
+			config-ref="api-http-listener_config"
+			path="${http.listener.console}">
+			<http:response statusCode="#[vars.httpStatus default 200]">
+				<http:headers><![CDATA[#[((vars.outboundHeaders default {}) ++ {'x-correlation-id': correlationId})]]]></http:headers>
+			</http:response>
+			<http:error-response statusCode="#[vars.httpStatus default 500]">
+				<http:body><![CDATA[#[payload]]]></http:body>
+				<http:headers><![CDATA[#[((vars.outboundHeaders default {}) ++ {'x-correlation-id': correlationId})]]]></http:headers>
+			</http:error-response>
+		</http:listener>
+		<apikit:console
+			doc:name="APIkit Console"
+			doc:id="4461e4bd-ce1d-4403-a464-62b1099bfcf8"
+			config-ref="api-kit_config" />
+		<error-handler ref="fam-relacionamento-sys-app-error-handler" />
+	</flow>
+</mule>

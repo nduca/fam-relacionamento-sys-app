@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+	<sub-flow
+		name="autenticar-parceiro-fam-subflow"
+		doc:id="e0cd4e29-268e-4f52-9b6e-41889cd7598b">
+		<ee:cache
+			doc:name="Cache do Token FAM"
+			doc:id="1ec7a221-b586-4c18-b55e-08397fb1c8a4"
+			cachingStrategy-ref="autenticacao-parceiro_caching-strategy">
+			<ee:transform
+				doc:name="Preparar Requisicao de Autenticacao FAM"
+				doc:id="5e611dd2-7072-4836-ac5a-83e37398de7d">
+				<ee:message>
+					<ee:set-payload resource="dwl/common/preparar-requisicao-autenticar-parceiro-fam.dwl" />
+				</ee:message>
+			</ee:transform>
+			<http:request
+				doc:name="Autenticar Parceiro FAM"
+				doc:id="5df3593a-349e-454b-be18-b3745368baeb"
+				config-ref="autenticacao-fam_http-request"
+				method="POST"
+				path="${fam.token.parceiroPath}">
+				<http:response-validator>
+					<http:success-status-code-validator values="100..599" />
+				</http:response-validator>
+			</http:request>
+			<choice
+				doc:name="Validar Retorno da Autenticacao"
+				doc:id="b9e52baf-f034-47e4-8679-60641d3f3322">
+				<when expression="#[attributes.statusCode == 200]">
+					<set-payload
+						value="#[payload.result.accessoToken]"
+						doc:name="Extrair Token de Acesso FAM"
+						doc:id="3e31b11a-2a31-4ecf-bafb-2997a0a5005a" />
+				</when>
+			</choice>
+		</ee:cache>
+	</sub-flow>
+</mule>

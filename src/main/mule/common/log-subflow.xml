@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+	<sub-flow name="registrar-log-requisicao-subflow">
+		<ee:transform
+			doc:name="Preparar Mensagem de Log da Requisicao"
+			doc:id="e217bb4c-4627-434c-b086-78b595554843">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable
+					resource="dwl/common/preparar-mensagem-log-requisicao.dwl"
+					variableName="mensagemLogRequisicao" />
+			</ee:variables>
+		</ee:transform>
+		<logger
+			level="INFO"
+			category="${logging.category.request}"
+			doc:name="Registrar API_REQUEST"
+			message="#[vars.mensagemLogRequisicao]" />
+	</sub-flow>
+
+	<sub-flow name="registrar-log-resposta-subflow">
+		<ee:transform
+			doc:name="Preparar Mensagem de Log da Resposta"
+			doc:id="aaa7120f-9519-4140-9c63-dca7743204c8">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable
+					resource="dwl/common/preparar-mensagem-log-resposta.dwl"
+					variableName="mensagemLogResposta" />
+			</ee:variables>
+		</ee:transform>
+		<logger
+			level="INFO"
+			category="${logging.category.response}"
+			doc:name="Registrar API_RESPONSE"
+			message="#[vars.mensagemLogResposta]" />
+	</sub-flow>
+
+	<sub-flow
+		name="registrar-log-erro-subflow"
+		doc:id="3647037f-fb86-4b22-a8ba-3e1161053d1a">
+		<ee:transform
+			doc:name="Preparar Mensagem de Log do Erro"
+			doc:id="d30089d8-8876-4837-a231-9add1c4b8e34">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable
+					resource="dwl/common/preparar-mensagem-log-erro.dwl"
+					variableName="mensagemLogErro" />
+			</ee:variables>
+		</ee:transform>
+		<logger
+			level="ERROR"
+			category="${logging.category.error}"
+			doc:name="Registrar API_ERROR"
+			message="#[vars.mensagemLogErro]" />
+	</sub-flow>
+</mule>

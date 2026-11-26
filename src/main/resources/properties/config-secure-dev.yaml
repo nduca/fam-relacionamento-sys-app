@@ -1,0 +1,7 @@
+# Arquivo de Secure Configuration Properties.
+# Valores sensíveis reais devem ser criptografados no formato ![...].
+# A chave de decriptação NÃO deve ser versionada.
+#
+# O bloco abaixo existe apenas para manter o arquivo YAML válido no template.
+template:
+  placeholder: "REMOVE_ME_WHEN_REAL_SECURE_PROPERTIES_ARE_ADDED"

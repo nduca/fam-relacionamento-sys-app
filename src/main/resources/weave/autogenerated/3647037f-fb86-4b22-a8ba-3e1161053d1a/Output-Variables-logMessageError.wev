@@ -1,0 +1,14 @@
+%dw 2.0
+
+type auto_3647037f_fb86_4b22_a8ba_3e1161053d1a_Output_Variables_logMessageError = {|
+  event: String, 
+  correlationId: String, 
+  application: String, 
+  version: String, 
+  environment: String, 
+  errorType: String, 
+  statusCode: Number, 
+  errorCode: String, 
+  durationMs: Null
+|}
+

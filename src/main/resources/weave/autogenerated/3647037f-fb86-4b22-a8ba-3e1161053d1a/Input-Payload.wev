@@ -1,0 +1,9 @@
+%dw 2.0
+
+type auto_3647037f_fb86_4b22_a8ba_3e1161053d1a_Input_Payload = {|
+  codigo: String, 
+  mensagem: String, 
+  detalhes?: Array<Nothing>, 
+  correlationId: String
+|}
+

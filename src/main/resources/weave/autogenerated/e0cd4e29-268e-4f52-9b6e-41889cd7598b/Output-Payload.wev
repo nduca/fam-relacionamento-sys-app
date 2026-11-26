@@ -1,0 +1,10 @@
+%dw 2.0
+
+type auto_e0cd4e29_268e_4f52_9b6e_41889cd7598b_Output_Payload = {|
+  result: Array<{|    codTipoHabilitacao?: String,     codCurso?: String,     cursoTipo?: String,     visualizacao?: String,     id?: Number,     tipoHabilitacao?: String  |} {"label": "CursoFam",
+  "description": "Item de curso retornado pela API FAM Workflow."}> {"description": "Array do result."}, 
+  message: String, 
+  statusCode: Number
+|} {"description": "Response espelho da operação GetCursos da API FAM Workflow.",
+"label": "GetCursosResponse"}
+

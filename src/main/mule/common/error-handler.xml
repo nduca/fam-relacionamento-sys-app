@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+	<sub-flow name="preparar-resposta-erro-comum-subflow">
+		<ee:transform doc:name="Preparar Resposta Padrao Erro">
+			<ee:message>
+				<ee:set-payload resource="dwl/common/preparar-resposta-padrao-erro.dwl" />
+			</ee:message>
+		</ee:transform>
+
+		<flow-ref
+			name="registrar-log-erro-subflow"
+			doc:name="Registrar Log de Erro"
+			doc:id="3c7da87f-ed72-40d7-a018-e48996c531ba" />
+	</sub-flow>
+
+	<error-handler name="fam-relacionamento-sys-app-error-handler">
+
+		<on-error-propagate
+			type="APIKIT:BAD_REQUEST"
+			logException="false">
+			<set-variable
+				variableName="httpStatus"
+				value="400"
+				doc:name="Definir Status HTTP" />
+			<set-variable
+				variableName="codigoErro"
+				value='#[p("error.codePrefix") ++ "-" ++ (vars.httpStatus as String)]'
+				doc:name="Definir Codigo de Erro" />
+			<set-variable
+				variableName="mensagemErro"
+				value='#["Requisição inválida: " ++ (error.description default "Erro não informado")]'
+				doc:name="Definir Mensagem de Erro" />
+			<flow-ref
+				name="preparar-resposta-erro-comum-subflow"
+				doc:name="Preparar Resposta de Erro Comum" />
+		</on-error-propagate>
+
+		<on-error-propagate
+			type="APIKIT:NOT_FOUND"
+			logException="false">
+			<set-variable
+				variableName="httpStatus"
+				value="404"
+				doc:name="Definir Status HTTP" />
+			<set-variable
+				value='#[p("error.codePrefix") ++ "-" ++ (vars.httpStatus as String)]'
+				doc:name="Definir Codigo de Erro"
+				doc:id="fb414543-52d4-48f2-b93f-883d3c627fb3"
+				variableName="codigoErro" />
+			<set-variable
+				variableName="mensagemErro"
+				value='#["Recurso não encontrado: " ++ (error.description default "Erro não informado")]'
+				doc:name="Definir Mensagem de Erro" />
+			<flow-ref
+				name="preparar-resposta-erro-comum-subflow"
+				doc:name="Preparar Resposta de Erro Comum" />
+		</on-error-propagate>
+
+		<on-error-propagate
+			type="APIKIT:METHOD_NOT_ALLOWED"
+			logException="false">
+			<set-variable
+				variableName="httpStatus"
+				value="405"
+				doc:name="Definir Status HTTP" />
+			<set-variable
+				value='#[p("error.codePrefix") ++ "-" ++ (vars.httpStatus as String)]'
+				doc:name="Definir Codigo de Erro"
+				doc:id="f34cb733-e442-4f59-9b0f-b0f0c6eba69b"
+				variableName="codigoErro" />
+			<set-variable
+				variableName="mensagemErro"
+				value='#["Método HTTP não permitido para o recurso: " ++ (error.description default "Erro não informado")]'
+				doc:name="Definir Mensagem de Erro" />
+			<flow-ref
+				name="preparar-resposta-erro-comum-subflow"
+				doc:name="Preparar Resposta de Erro Comum" />
+		</on-error-propagate>
+
+		<on-error-propagate
+			type="APIKIT:NOT_ACCEPTABLE"
+			logException="false">
+			<set-variable
+				variableName="httpStatus"
+				value="406"
+				doc:name="Definir Status HTTP" />
+			<set-variable
+				value='#[p("error.codePrefix") ++ "-" ++ (vars.httpStatus as String)]'
+				doc:name="Definir Codigo de Erro"
+				doc:id="bbcc23a8-43fd-4270-ae0c-a5630eee9855"
+				variableName="codigoErro" />
+			<set-variable
+				variableName="mensagemErro"
+				value='#["Representação solicitada não suportada: " ++ (error.description default "Erro não informado")]'
+				doc:name="Definir Mensagem de Erro" />
+			<flow-ref
+				name="preparar-resposta-erro-comum-subflow"
+				doc:name="Preparar Resposta de Erro Comum" />
+		</on-error-propagate>
+
+		<on-error-propagate
+			type="APIKIT:UNSUPPORTED_MEDIA_TYPE"
+			logException="false">
+			<set-variable
+				variableName="httpStatus"
+				value="415"
+				doc:name="Definir Status HTTP" />
+			<set-variable
+				value='#[p("error.codePrefix") ++ "-" ++ (vars.httpStatus as String)]'
+				doc:name="Definir Codigo de Erro"
+				doc:id="cfacd6b4-76b8-4ccc-a9f7-5f0a0190dfb9"
+				variableName="codigoErro" />
+			<set-variable
+				variableName="mensagemErro"
+				value='#["Content-Type não suportado: " ++ (error.description default "Erro não informado")]'
+				doc:name="Definir Mensagem de Erro" />
+			<flow-ref
+				name="preparar-resposta-erro-comum-subflow"
+				doc:name="Preparar Resposta de Erro Comum" />
+		</on-error-propagate>
+
+		<on-error-propagate
+			type="APIKIT:NOT_IMPLEMENTED"
+			logException="false">
+			<set-variable
+				variableName="httpStatus"
+				value="501"
+				doc:name="Definir Status HTTP" />
+			<set-variable
+				value='#[p("error.codePrefix") ++ "-" ++ (vars.httpStatus as String)]'
+				doc:name="Definir Codigo de Erro"
+				doc:id="b2ff19dc-9c84-4444-8571-e4d05ce03bbd"
+				variableName="codigoErro" />
+			<set-variable
+				variableName="mensagemErro"
+				value='#["Operação não implementada: " ++ (error.description default "Erro não informado")]'
+				doc:name="Definir Mensagem de Erro" />
+			<flow-ref
+				name="preparar-resposta-erro-comum-subflow"
+				doc:name="Preparar Resposta de Erro Comum" />
+		</on-error-propagate>
+
+		<!-- Falhas de transporte: não existe resposta HTTP normal do downstream. Status HTTP de downstream (4xx/5xx) devem ser tratados no fluxo normal 
+			usando Response Validator amplo (100..599). -->
+		<on-error-propagate
+			type="HTTP:TIMEOUT"
+			logException="true">
+			<set-variable
+				variableName="httpStatus"
+				value="504"
+				doc:name="Definir Status HTTP" />
+			<set-variable
+				value='#[p("error.codePrefix") ++ "-" ++ (vars.httpStatus as String)]'
+				doc:name="Definir Codigo de Erro"
+				doc:id="258160fe-4c82-43b6-94b3-d8a941706317"
+				variableName="codigoErro" />
+			<set-variable
+				variableName="mensagemErro"
+				value='#["Timeout ao acessar serviço downstream: " ++ (error.description default "Erro não informado")]'
+				doc:name="Definir Mensagem de Erro" />
+			<flow-ref
+				name="preparar-resposta-erro-comum-subflow"
+				doc:name="Preparar Resposta de Erro Comum" />
+		</on-error-propagate>
+
+		<on-error-propagate
+			type="HTTP:CONNECTIVITY"
+			logException="true">
+			<set-variable
+				variableName="httpStatus"
+				value="502"
+				doc:name="Definir Status HTTP" />
+			<set-variable
+				value='#[p("error.codePrefix") ++ "-" ++ (vars.httpStatus as String)]'
+				doc:name="Definir Codigo de Erro"
+				doc:id="48b041c9-68aa-4b9a-b876-1e6dfe683b55"
+				variableName="codigoErro" />
+			<set-variable
+				variableName="mensagemErro"
+				value='#["Falha de conectividade com serviço downstream: " ++ (error.description default "Erro não informado")]'
+				doc:name="Definir Mensagem de Erro" />
+			<flow-ref
+				name="preparar-resposta-erro-comum-subflow"
+				doc:name="Preparar Resposta de Erro Comum" />
+		</on-error-propagate>
+
+		<on-error-propagate
+			type="ANY"
+			logException="true">
+			<set-variable
+				variableName="httpStatus"
+				value="500"
+				doc:name="Definir Status HTTP" />
+			<set-variable
+				value='#[p("error.codePrefix") ++ "-" ++ (vars.httpStatus as String)]'
+				doc:name="Definir Codigo de Erro"
+				doc:id="fa25163e-7d2c-4e2e-8521-471c78bafd17"
+				variableName="codigoErro" />
+			<set-variable
+				variableName="mensagemErro"
+				value='#["Erro interno não esperado: " ++ (error.description default "Erro não informado")]'
+				doc:name="Definir Mensagem de Erro" />
+			<flow-ref
+				name="preparar-resposta-erro-comum-subflow"
+				doc:name="Preparar Resposta de Erro Comum" />
+		</on-error-propagate>
+	</error-handler>
+</mule>

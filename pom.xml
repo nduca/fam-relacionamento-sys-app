@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>aba13857-ad50-49ab-904b-06cb630eb20d</groupId>
+		<artifactId>fam-mule-parent</artifactId>
+		<version>1.0.0</version>
+		<relativePath>build/parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>fam-relacionamento-sys-app</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>mule-application</packaging>
+
+	<name>fam-relacionamento-sys-app</name>
+
+	<properties>
+		<!-- API Specification publicada no Exchange -->
+		<api.spec.groupId>${project.parent.groupId}</api.spec.groupId>
+		<api.spec.artifactId>fam-relacionamento-sys-api</api.spec.artifactId>
+		<api.spec.version>1.0.0</api.spec.version>
+		<api.spec.mainFile>fam-relacionamento-sys-api.raml</api.spec.mainFile>
+
+		<!-- Foundation / Anypoint -->
+		<anypoint.organization.id>${project.parent.groupId}</anypoint.organization.id>
+		<anypoint.businessGroupId>${project.parent.groupId}</anypoint.businessGroupId>
+	</properties>
+
+	<dependencies>
+		<!-- Contrato RAML como fonte de verdade -->
+		<dependency>
+			<groupId>${api.spec.groupId}</groupId>
+			<artifactId>${api.spec.artifactId}</artifactId>
+			<version>${api.spec.version}</version>
+			<classifier>raml</classifier>
+			<type>zip</type>
+		</dependency>
+
+		<!-- Baseline REST -->
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-http-connector</artifactId>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-apikit-module</artifactId>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>com.mulesoft.modules</groupId>
+			<artifactId>mule-secure-configuration-property-module</artifactId>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+
+		<!-- Testes -->
+		<dependency>
+			<groupId>com.mulesoft.munit</groupId>
+			<artifactId>munit-runner</artifactId>
+			<classifier>mule-plugin</classifier>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.mulesoft.munit</groupId>
+			<artifactId>munit-tools</artifactId>
+			<classifier>mule-plugin</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-objectstore-connector</artifactId>
+			<version>1.3.4</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- Ativa a configuração herdada do parent local -->
+			<plugin>
+				<groupId>org.mule.tools.maven</groupId>
+				<artifactId>mule-maven-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<classifier>mule-application</classifier>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.mulesoft.munit.tools</groupId>
+				<artifactId>munit-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>local</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<mule.env>local</mule.env>
+				<app.suffix>local</app.suffix>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>dev</id>
+			<properties>
+				<mule.env>dev</mule.env>
+				<app.suffix>dev</app.suffix>
+				<anypoint.environment>DEV</anypoint.environment>
+				<cloudhub2.target>ps-fam-nonprod</cloudhub2.target>
+				<api.id>__API_MANAGER_INSTANCE_ID_DEV__</api.id>
+				<replicas>1</replicas>
+				<vCores>0.1</vCores>
+				<ingress.generateDefaultPublicUrl>false</ingress.generateDefaultPublicUrl>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>hml</id>
+			<properties>
+				<mule.env>hml</mule.env>
+				<app.suffix>hml</app.suffix>
+				<anypoint.environment>HML</anypoint.environment>
+				<cloudhub2.target>ps-fam-nonprod</cloudhub2.target>
+				<api.id>__API_MANAGER_INSTANCE_ID_HML__</api.id>
+				<replicas>1</replicas>
+				<vCores>0.1</vCores>
+				<ingress.generateDefaultPublicUrl>false</ingress.generateDefaultPublicUrl>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>prod</id>
+			<properties>
+				<mule.env>prod</mule.env>
+				<app.suffix>prod</app.suffix>
+				<anypoint.environment>PROD</anypoint.environment>
+				<cloudhub2.target>ps-fam-prod</cloudhub2.target>
+				<api.id>__API_MANAGER_INSTANCE_ID_PROD__</api.id>
+				<replicas>1</replicas>
+				<vCores>0.1</vCores>
+				<ingress.generateDefaultPublicUrl>false</ingress.generateDefaultPublicUrl>
+			</properties>
+		</profile>
+	</profiles>
+</project>

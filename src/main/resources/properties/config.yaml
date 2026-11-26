@@ -1,0 +1,31 @@
+# Propriedades comuns a todos os ambientes.
+# Este arquivo é filtrado pelo Maven para substituir propriedades ${...} do pom.xml.
+
+application:
+  name: "${project.artifactId}"
+  version: "${project.version}"
+
+api:
+  spec: "resource::${api.spec.groupId}:${api.spec.artifactId}:${api.spec.version}:raml:zip:${api.spec.mainFile}"
+
+error:
+  codePrefix: "FAM-RELACIONAMENTO-SYS-APP"
+
+http:
+  listener:
+    protocol: "http"
+    host: "0.0.0.0"
+    port: "8081"
+    path: "/*"
+    console: "/api/console/*"
+    readTimeout: "30000"
+  request:
+    connectionTimeout: "30000"
+    connectionIdleTimeout: "30000"
+    responseTimeout: "30000"
+
+logging:
+  category:
+    request: "br.com.fam.api.request"
+    response: "br.com.fam.api.response"
+    error: "br.com.fam.api.error"
